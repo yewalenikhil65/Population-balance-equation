@@ -134,4 +134,5 @@ plot!(ϕ, (jsol[3,:]), lw = 2, xlabel = "Time (sec)")                      # tri
 plot!(ϕ, sol[3,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
 
 ```
-
+**Benchmarking PBE** - Credits to [SciMLBencmarks](https://benchmarks.sciml.ai/) for the elegant codes for the purpose of benchmarking
+click [here](https://github.com/yewalenikhil65/Population-balance-equation/blob/main/Figs/benchmarking_PBE.png) to see how different Jump algorithms fare for solving PBE stochastically
