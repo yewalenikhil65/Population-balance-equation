@@ -4,10 +4,7 @@ Smoluchowski coagulation equation is a population balance equation that describe
 
 This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml)
 
-
   - **1.** Importing some important packages.
-
-
 ```julia
 using ModelingToolkit, LinearAlgebra
 using DiffEqBase ,DiffEqJump, OrdinaryDiffEq
@@ -16,7 +13,8 @@ using BenchmarkTools
 using SpecialFunctions
 plotly()
 ```
-  - **2.** Lets say there are `N` number of cluster size particles in the system. Lets initialise the system with some initial concentration `C`, initial number of singlets `uₒ` in the system. Since its a bimolecular chain of Reaction system, the bulk volume `V` of the system in which these binary collisions occur is important in the 
+  - **2.** Lets say there are `N` number of cluster size particles in the system. Lets initialise the system with some initial concentration `C`, initial number of singlets `uₒ` in the system. Since its a bimolecular chain of Reaction system(`nr` number of reactions), the bulk volume `V` of the system in which these binary collisions occur is important in the calculation of rate laws.
+  
 ```julia
 ## Parameter
 N = 5;      # Number of clusters
@@ -29,7 +27,10 @@ integ(x) = Int(floor(x));
 n = integ(N/2);
 nr = N%2 == 0 ? (n*(n + 1) - n) : (n*(n + 1)); # No. of forward reactions
 ```
-
+  - **3** Check the figure on [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) page, the `pair` of reactants that collide can be easily generated for `N` cluster size particles in the system. We also initialise the volumes of these colliding clusters as `volᵢ` and `volⱼ` for the reactants
+  
+```julia
+## pairs of reactants
 pair = [];
 for i = 2:N
     push!(pair,[1:integ(i/2)  i .- (1:integ(i/2))])
@@ -40,12 +41,14 @@ vⱼ = @view pair[:,2];  # Reactant 2 index
 volᵢ = Vₒ*vᵢ;    # cm⁻³
 volⱼ = Vₒ*vⱼ;    # cm⁻³
 sum_vᵢvⱼ = @. vᵢ + vⱼ;  # Product index
-
+```
+  - **4** Specifying rate(kernel) at which reactants collide to form product. For simplicity we have used additive kernel, multiplicative kernel and constant kernel. The constants(`B`,`b` and `C`) used are adopted from the Scotts paper 
+```julia
 i = parse(Int, input("Enter 1 for additive kernel,
                 2 for Multiplicative, 3 for constant"))
 if i==1
     B = 1.53e03;    # s⁻¹
-    kₛ = @. B*(volᵢ + volⱼ)/V;
+    kₛ = @. B*(volᵢ + volⱼ)/V;    # dividing by volume as its a bi-molecular reaction chain
 elseif i==2
     b = 3.8e11;     #  cm⁻³ s⁻¹
     kₛ = @. b*(volᵢ*volⱼ)/V;
@@ -53,7 +56,9 @@ else
     C = 1.84e-04;   # cm³ s⁻¹
     kₛ = @. C/V;
 end
+```
 
+```julia
 ## Writing-off the parameter in Pairs in Sequence
 @variables k[1:nr];   pₘₐₚ = Pair.(k, kₛ);
 @parameters t;        @variables X[collect(1:N)](t);
@@ -66,6 +71,9 @@ else
 end
 u₀ = zeros(Int64, N);   u₀[1] = uₒ;   # initial condition of monomers
 u₀map = Pair.(X, u₀); # population of other polymers in zeros
+```
+
+```julia
 rx = [];              # empty-reaction vector
 
 ##  Forming ReactionSystem
@@ -78,17 +86,20 @@ rx = [];              # empty-reaction vector
     end
 end
 rs = ReactionSystem(rx, t, X, k);
+```
 
+```julia
 ## solving the system
 jumpsys = convert(JumpSystem, rs; combinatoric_ratelaws = true);
 dprob = DiscreteProblem(jumpsys, u₀map, tspan, pₘₐₚ; parallel = true);
 alg = RSSA();
 jprob = @btime JumpProblem(jumpsys, dprob, alg);
 jsol = @btime solve(jprob, SSAStepper());
+```
 
+```julia
 ## Results for first three polymers
 v_res = [1;2;3]
-plot(jsol , lw = 2, vars = v_res ,xlabel = "Time (sec)" )
 
 ## comparsion with analytical solution
 if i == 1
@@ -119,5 +130,4 @@ plot!(ϕ, sol[2,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
 
 plot(ϕ, (jsol[3,:]), lw = 2, xlabel = "Time (sec)")
 plot!(ϕ, sol[3,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
-
 ```
