@@ -4,7 +4,7 @@ Smoluchowski coagulation equation is a population balance equation that describe
 
 This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml)
 
-  - **1.** Importing some important packages.
+  - **1.)**  Importing some important packages.
 ```julia
 using ModelingToolkit, LinearAlgebra
 using DiffEqBase ,DiffEqJump, OrdinaryDiffEq
@@ -13,7 +13,7 @@ using BenchmarkTools
 using SpecialFunctions
 plotly()
 ```
-  - **2.** Lets say there are `N` number of cluster size particles in the system. Lets initialise the system with some initial concentration `C`, initial number of singlets `uₒ` in the system. Since its a bimolecular chain of Reaction system(`nr` number of reactions), the bulk volume `V` of the system in which these binary collisions occur is important in the calculation of rate laws.
+  - **2.)**  Lets say there are `N` number of cluster size particles in the system. Lets initialise the system with some initial concentration `C`, initial number of singlets `uₒ` in the system. Since its a bimolecular chain of Reaction system(`nr` number of reactions), the bulk volume `V` of the system in which these binary collisions occur is important in the calculation of rate laws.
   
 ```julia
 ## Parameter
@@ -27,7 +27,7 @@ integ(x) = Int(floor(x));
 n = integ(N/2);
 nr = N%2 == 0 ? (n*(n + 1) - n) : (n*(n + 1)); # No. of forward reactions
 ```
-  - **3** Check the figure on [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) page, the `pair` of reactants that collide can be easily generated for `N` cluster size particles in the system. We also initialise the volumes of these colliding clusters as `volᵢ` and `volⱼ` for the reactants
+  - **3.)**  Check the figure on [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) page, the `pair` of reactants that collide can be easily generated for `N` cluster size particles in the system. We also initialise the volumes of these colliding clusters as `volᵢ` and `volⱼ` for the reactants
   
 ```julia
 ## pairs of reactants
@@ -42,7 +42,7 @@ volᵢ = Vₒ*vᵢ;    # cm⁻³
 volⱼ = Vₒ*vⱼ;    # cm⁻³
 sum_vᵢvⱼ = @. vᵢ + vⱼ;  # Product index
 ```
-  - **4** Specifying rate(kernel) at which reactants collide to form product. For simplicity we have used additive kernel, multiplicative kernel and constant kernel. The constants(`B`,`b` and `C`) used are adopted from the Scotts paper 
+  - **4.)**  Specifying rate(kernel) at which reactants collide to form product. For simplicity we have used additive kernel, multiplicative kernel and constant kernel. The constants(`B`,`b` and `C`) used are adopted from the Scotts paper 
 ```julia
 i = parse(Int, input("Enter 1 for additive kernel,
                 2 for Multiplicative, 3 for constant"))
@@ -57,7 +57,7 @@ else
     kₛ = @. C/V;
 end
 ```
-  - **5** Lets write-off the rates in `pₘₐₚ` as Pairs and initial condition with only singlets present initially in `u₀map` that we  will use in creating JumpSystems with massaction.
+  - **5.)**  Lets write-off the rates in `pₘₐₚ` as Pairs and initial condition with only singlets present initially in `u₀map` that we  will use in creating JumpSystems with massaction.
 ```julia
 ## Writing-off the parameter in Pairs in Sequence
 @variables k[1:nr];   pₘₐₚ = Pair.(k, kₛ);
@@ -72,7 +72,7 @@ end
 u₀ = zeros(Int64, N);   u₀[1] = uₒ;   # initial condition of monomers
 u₀map = Pair.(X, u₀); # population of other polymers in zeros
 ```
-  - **6**  push the Reactions as shown in figure at [here](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation). When `vᵢ[n] == vⱼ[n]` ,we use rate as `2*k[n]` ,as coagulation kernel is related to deterministic rate-law in form, (to followed from a paper by [Laurenzi et.al](https://www.sciencedirect.com/science/article/pii/S0021999102970178))
+  - **6.)**  Push the Reactions(into empty reaction_network) as shown in figure at [here](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation). When `vᵢ[n] == vⱼ[n]` ,we use rate as `2*k[n]` ,as coagulation kernel is related to deterministic rate-law in form, (to followed from a paper by [Laurenzi et.al](https://www.sciencedirect.com/science/article/pii/S0021999102970178))
           coagulation kernel = (1 + δᵢⱼ)*deterministic rate
                 
 ```julia
@@ -89,7 +89,7 @@ rx = [];              # empty-reaction vector
 end
 rs = ReactionSystem(rx, t, X, k);
 ```
-  - **7** Convert the reactionSystem into a JumpSystema and solve it using standard Jump solvers such as Gillespie process. For details, take a look at [DifferentialEquations](https://diffeq.sciml.ai/stable/) documentation 
+  - **7.)**  Convert the reactionSystem into a JumpSystema and solve it using standard Jump solvers such as Gillespie process. For details, take a look at [DifferentialEquations](https://diffeq.sciml.ai/stable/) documentation 
 ```julia
 ## solving the system
 jumpsys = convert(JumpSystem, rs; combinatoric_ratelaws = true);
@@ -98,7 +98,7 @@ alg = Direct();
 jprob = @btime JumpProblem(jumpsys, dprob, alg);
 jsol = @btime solve(jprob, SSAStepper());
 ```
-  - **8** Lets check the results for only first three polymers/cluster sizes. The result is compared with analytical solution obtained for this system with additive, multiplicative and constant kernels(rate at which reactants collide)
+  - **8.)**  Lets check the results for only first three polymers/cluster sizes. The result is compared with analytical solution obtained for this system with additive, multiplicative and constant kernels(rate at which reactants collide)
 ```julia
 ## Results for first three polymers
 v_res = [1;2;3]
