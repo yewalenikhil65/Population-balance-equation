@@ -57,7 +57,7 @@ else
     kₛ = @. C/V;
 end
 ```
-
+  - **5** Lets write-off the rates in `pₘₐₚ` as Pairs and initial condition with only singlets present initially in `u₀map` that we  will use in creating JumpSystems with massaction.
 ```julia
 ## Writing-off the parameter in Pairs in Sequence
 @variables k[1:nr];   pₘₐₚ = Pair.(k, kₛ);
@@ -72,7 +72,9 @@ end
 u₀ = zeros(Int64, N);   u₀[1] = uₒ;   # initial condition of monomers
 u₀map = Pair.(X, u₀); # population of other polymers in zeros
 ```
-
+  - **6**  push the Reactions as shown in figure at [here](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation). When `vᵢ[n] == vⱼ[n]` ,we use rate as `2*k[n]` ,as coagulation kernel is related to deterministic rate-law in form, (to followed from a paper by [Laurenzi et.al](https://www.sciencedirect.com/science/article/pii/S0021999102970178))
+          coagulation kernel = (1 + δᵢⱼ)*deterministic rate
+                
 ```julia
 rx = [];              # empty-reaction vector
 
@@ -87,16 +89,16 @@ rx = [];              # empty-reaction vector
 end
 rs = ReactionSystem(rx, t, X, k);
 ```
-
+  - **7** Convert the reactionSystem into a JumpSystema and solve it using standard Jump solvers such as Gillespie process. For details, take a look at [DifferentialEquations](https://diffeq.sciml.ai/stable/) documentation 
 ```julia
 ## solving the system
 jumpsys = convert(JumpSystem, rs; combinatoric_ratelaws = true);
 dprob = DiscreteProblem(jumpsys, u₀map, tspan, pₘₐₚ; parallel = true);
-alg = RSSA();
+alg = Direct();
 jprob = @btime JumpProblem(jumpsys, dprob, alg);
 jsol = @btime solve(jprob, SSAStepper());
 ```
-
+  - **8** Lets check the results for only first three polymers/cluster sizes. The result is compared with analytical solution obtained for this system with additive, multiplicative and constant kernels(rate at which reactants collide)
 ```julia
 ## Results for first three polymers
 v_res = [1;2;3]
