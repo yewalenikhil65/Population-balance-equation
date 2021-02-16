@@ -1,8 +1,9 @@
-# Population-balance-equation
+# Population balance equation
 **Implementation of population balance equation** 
+Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which say Singlets collide to for doublets, singlets and doublets collide to form triplets and so on. This models many chemical/physical processes such as polymerization, flocculation etc.
+
 This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml)
 
-Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which Singlets collide to for doublets, singlets and doublets collide to form triplets and so on. This models 
 
   - **1.** Importing some important packages.
 
@@ -15,7 +16,7 @@ using BenchmarkTools
 using SpecialFunctions
 plotly()
 ```
-  - **2.** Lets say there are `N` number of cluster size particles in the system. Lets initialise the system with some initial concentration, initial number of singlets in
+  - **2.** Lets say there are `N` number of cluster size particles in the system. Lets initialise the system with some initial concentration `C`, initial number of singlets `uₒ` in the system. Since its a bimolecular chain of Reaction system, the bulk volume `V` of the system in which these binary collisions occur is important in the 
 ```julia
 ## Parameter
 N = 5;      # Number of clusters
