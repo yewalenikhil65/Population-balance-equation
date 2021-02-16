@@ -1,6 +1,6 @@
 # Population balance equation
 **Implementation of population balance equation** 
-Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which say Singlets collide to for doublets, singlets and doublets collide to form triplets and so on. This models many chemical/physical processes such as polymerization, flocculation etc.
+Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which ,say Singlets collide to form doublets, singlets and doublets collide to form triplets and so on. This models many chemical/physical processes such as polymerization, flocculation etc.
 
 This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml)
 
@@ -124,12 +124,14 @@ else
     end
 end
 # plotting normalised concentration vs analytical solution
-plot(ϕ, (jsol[1,:]), lw = 2, xlabel = "Time (sec)")
+plot(ϕ, (jsol[1,:]), lw = 2, xlabel = "Time (sec)")                        # first species/singlet
 plot!(ϕ, sol[1,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
 
-plot(ϕ, (jsol[2,:]), lw = 2, xlabel = "Time (sec)")
+plot!(ϕ, (jsol[2,:]), lw = 2, xlabel = "Time (sec)")                      # doublets
 plot!(ϕ, sol[2,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
 
-plot(ϕ, (jsol[3,:]), lw = 2, xlabel = "Time (sec)")
+plot!(ϕ, (jsol[3,:]), lw = 2, xlabel = "Time (sec)")                      # triplets
 plot!(ϕ, sol[3,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
+
 ```
+
