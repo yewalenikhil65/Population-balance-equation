@@ -1,5 +1,6 @@
-# Population balance equation
+## Population balance equation
 **Implementation of population balance equation** 
+
 Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which ,say Singlets collide to form doublets, singlets and doublets collide to form triplets and so on. This models many chemical/physical processes such as polymerization, flocculation etc.
 
 This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml)
@@ -136,3 +137,8 @@ plot!(ϕ, sol[3,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
 ```
 **Benchmarking PBE** - Credits to [SciMLBenchmarks](https://benchmarks.sciml.ai/) for the elegant codes for the purpose of benchmarking
 click [here](https://github.com/yewalenikhil65/Population-balance-equation/blob/main/Figs/benchmarking_PBE.png) to see how different Jump algorithms fare for solving PBE stochastically
+
+## Sources
+1. https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation
+2. Scott, W. T. (1968). Analytic Studies of Cloud Droplet Coalescence I, Journal of Atmospheric Sciences, 25(1), 54-65. Retrieved Feb 18, 2021, from https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml
+3. Ian J. Laurenzi, John D. Bartels, Scott L. Diamond, A General Algorithm for Exact Simulation of Multicomponent Aggregation Processes, Journal of Computational Physics, Volume 177, Issue 2, 2002, Pages 418-449, ISSN 0021-9991, https://doi.org/10.1006/jcph.2002.7017.
