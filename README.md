@@ -3,7 +3,7 @@
 
 Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which ,say Singlets collide to form doublets, singlets and doublets collide to form triplets and so on. This models many chemical/physical processes such as polymerization, flocculation etc.
 
-This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml)
+This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml) that is also mentioned in reference [4](https://doi.org/10.1016/S0006-3495(99)77019-0)
 
   - **1.)**  Importing some important packages.
 ```julia
@@ -18,12 +18,12 @@ plotly()
   
 ```julia
 ## Parameter
-N = 5;      # Number of clusters
-C  = 238.720;  # initial concentration == number of initial monomers/ volume of the bulk system
-uₒ = 10000; # No. of singlets initially
-V = uₒ/C;   # Bulk volume of system..use this in ReactionSystem
+N = 10;         # Number of clusters
+Vₒ = (4π/3)*(10e-06*100)^3;  # volume of a singlet/monomer in cm³
+Nₒ = 1e-06/Vₒ;   # initial conc. = (No. of init. monomers) / Volume of the bulk system
+uₒ = 10000;    # No. of singlets initially
+V = uₒ/Nₒ;      # Bulk volume of system in cm³
 
-Vₒ = 4.189e-09;  # volume of a singlet with 10 μm dia
 integ(x) = Int(floor(x));
 n = integ(N/2);
 nr = N%2 == 0 ? (n*(n + 1) - n) : (n*(n + 1)); # No. of forward reactions
@@ -106,22 +106,22 @@ v_res = [1;2;3]
 
 ## comparsion with analytical solution
 if i == 1
-    ϕ = @. 1 - exp(-0.00153*jsol.t) # normalised "time"
+    ϕ = @. 1 - exp(-B*Nₒ*Vₒ*jsol.t);        # normalised "time"
     sol = zeros(length(v_res), length(ϕ))
     for j in v_res
-         sol[j,:] = @. uₒ*(1 - ϕ)*(((j*ϕ)^(j-1))/gamma(j+1))*exp(-j*ϕ);
+        sol[j,:] = @. Nₒ*(1 - ϕ)*(((j*ϕ)^(j-1))/gamma(j+1))*exp(-j*ϕ);
     end
 elseif i == 2
-    ϕ = @. (0.00159*jsol.t);   # normalised "time"
+    ϕ = @. (b*Nₒ*Vₒ*Vₒ*jsol.t);             # normalised "time"
     sol = zeros(length(v_res), length(ϕ))
     for j in v_res
-        sol[j,:] = @. uₒ*(((j*ϕ)^(j-1))/(j*gamma(j+1)))*exp(-j*ϕ);
+        sol[j,:] = @. Nₒ*(((j*ϕ)^(j-1))/(j*gamma(j+1)))*exp(-j*ϕ);
     end
 else
-    ϕ = @. (0.0429*jsol.t);  # normalised "time"
+    ϕ = @. (C*Nₒ*jsol.t);                   # normalised "time"
     sol = zeros(length(v_res), length(ϕ))
     for j in v_res
-        sol[j,:] = @. 4uₒ*((ϕ^(j-1))/((ϕ + 2)^(j+1)));
+        sol[j,:] = @. 4Nₒ*((ϕ^(j-1))/((ϕ + 2)^(j+1)));
     end
 end
 # plotting normalised concentration vs analytical solution
@@ -142,3 +142,4 @@ click [here](https://github.com/yewalenikhil65/Population-balance-equation/blob/
 1. https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation
 2. Scott, W. T. (1968). Analytic Studies of Cloud Droplet Coalescence I, Journal of Atmospheric Sciences, 25(1), 54-65. Retrieved Feb 18, 2021, from https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml
 3. Ian J. Laurenzi, John D. Bartels, Scott L. Diamond, A General Algorithm for Exact Simulation of Multicomponent Aggregation Processes, Journal of Computational Physics, Volume 177, Issue 2, 2002, Pages 418-449, ISSN 0021-9991, https://doi.org/10.1006/jcph.2002.7017.
+4. Laurenzi IJ, Diamond SL. Monte Carlo simulation of the heterotypic aggregation kinetics of platelets and neutrophils. Biophys J. 1999 Sep;77(3):1733-46. doi: 10.1016/S0006-3495(99)77019-0. PMID: 10465782; PMCID: PMC1300459.[https://doi.org/10.1016/S0006-3495(99)77019-0]
