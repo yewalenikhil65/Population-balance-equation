@@ -78,14 +78,20 @@ u₀map = Pair.(X, u₀); # population of other polymers in zeros
                 
 ```julia
 rx = [];              # empty-reaction vector
-
-##  Forming ReactionSystem
+reactant_stoich = Array{Array{Pair{Int64,Int64},1},1}(undef,nr);
+net_stoich = Array{Array{Pair{Int64,Int64},1},1}(undef,nr);
 @time for n = 1:nr
     if (vᵢ[n] == vⱼ[n])    # checking the reactants
         push!(rx, Reaction(2*k[n], [ X[vᵢ[n]] ] ,[ X[sum_vᵢvⱼ[n]] ] ,[2],[1]));
+
+        reactant_stoich[n] = [vᵢ[n] => 2];
+        net_stoich[n] = [vᵢ[n] => -2, sum_vᵢvⱼ[n] => 1];
     else
         push!(rx, Reaction(k[n], [ X[vᵢ[n]] , X[vⱼ[n]] ] ,[ X[sum_vᵢvⱼ[n]] ],
                                 [1, 1],[1]));
+
+        reactant_stoich[n] = [vᵢ[n] => 1 , vⱼ[n] => 1];
+        net_stoich[n] = [vᵢ[n] => -1 , vⱼ[n] => -1 , sum_vᵢvⱼ[n] => 1];
     end
 end
 rs = ReactionSystem(rx, t, X, k);
@@ -96,8 +102,10 @@ rs = ReactionSystem(rx, t, X, k);
 jumpsys = convert(JumpSystem, rs; combinatoric_ratelaws = true);
 dprob = DiscreteProblem(jumpsys, u₀map, tspan, pₘₐₚ; parallel = true);
 alg = Direct();
-jprob = @btime JumpProblem(jumpsys, dprob, alg);
-jsol = @btime solve(jprob, SSAStepper());
+stepper = SSAStepper();
+mass_act_jump = MassActionJump(kₛ ,reactant_stoich, net_stoich);
+jprob = @btime JumpProblem(dprob, alg ,mass_act_jump ,save_positions=(false,false));
+jsol = @btime solve(jprob, stepper, saveat = 1.);
 ```
   - **8.)**  Lets check the results for only first three polymers/cluster sizes. The result is compared with analytical solution obtained for this system with additive, multiplicative and constant kernels(rate at which reactants collide)
 ```julia
