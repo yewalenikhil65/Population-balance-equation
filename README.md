@@ -150,4 +150,3 @@ click [here](https://github.com/yewalenikhil65/Population-balance-equation/blob/
 1. https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation
 2. Scott, W. T. (1968). Analytic Studies of Cloud Droplet Coalescence I, Journal of Atmospheric Sciences, 25(1), 54-65. Retrieved Feb 18, 2021, from https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml
 3. Ian J. Laurenzi, John D. Bartels, Scott L. Diamond, A General Algorithm for Exact Simulation of Multicomponent Aggregation Processes, Journal of Computational Physics, Volume 177, Issue 2, 2002, Pages 418-449, ISSN 0021-9991, https://doi.org/10.1006/jcph.2002.7017.
-4. Laurenzi IJ, Diamond SL. Monte Carlo simulation of the heterotypic aggregation kinetics of platelets and neutrophils. Biophys J. 1999 Sep;77(3):1733-46. doi: 10.1016/S0006-3495(99)77019-0. PMID: 10465782; PMCID: PMC1300459.[https://doi.org/10.1016/S0006-3495(99)77019-0]
