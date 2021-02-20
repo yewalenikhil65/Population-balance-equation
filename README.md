@@ -133,14 +133,18 @@ else
     end
 end
 # plotting normalised concentration vs analytical solution
-plot(ϕ, (jsol[1,:]), lw = 2, xlabel = "Time (sec)")                        # first species/singlet
-plot!(ϕ, sol[1,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
+plot(ϕ, jsol[1,:]/uₒ, lw = 2, xlabel = "Time (sec)",label = string("X",1))
+plot!(ϕ, sol[1,:]/Nₒ, lw = 2, line = (:dot, 4) ,
+        label = string("Analytical sol", "--X",1))
 
-plot!(ϕ, (jsol[2,:]), lw = 2, xlabel = "Time (sec)")                      # doublets
-plot!(ϕ, sol[2,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
+plot!(ϕ, jsol[2,:]/uₒ, lw = 2, xlabel = "Time (sec)",label = string("X",2))
+plot!(ϕ, sol[2,:]/Nₒ, lw = 2, line = (:dot, 4) ,
+        label = string("Analytical sol", "--X",2))
 
-plot!(ϕ, (jsol[3,:]), lw = 2, xlabel = "Time (sec)")                      # triplets
-plot!(ϕ, sol[3,:], lw = 2, line = (:dot, 4) ,label = "Analytical sol")
+plot!(ϕ, jsol[3,:]/uₒ, lw = 2, xlabel = "Time (sec)",label = string("X",3))
+plot!(ϕ, sol[3,:]/Nₒ, lw = 2, line = (:dot, 4) ,ylabel = "N(i,t)/N(1,0)"
+        ,label = string("Analytical sol", "--X",3))
+
 
 ```
 **Benchmarking PBE** - Credits to [SciMLBenchmarks](https://benchmarks.sciml.ai/) for the elegant codes for the purpose of benchmarking
