@@ -1,9 +1,9 @@
 ## Population balance equation
-**Implementation of population balance equation** 
+**Implementation of population balance equation- by programmatically generating the reactions using ReactionSystems** 
 
 Smoluchowski coagulation equation is a population balance equation that describes the system of reactions in which ,say Singlets collide to form doublets, singlets and doublets collide to form triplets and so on. This models many chemical/physical processes such as polymerization, flocculation etc.
 
-This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml) that is also mentioned in reference [4](https://doi.org/10.1016/S0006-3495(99)77019-0)
+This is a short tutorial on implementation of [Smoluchowski coagulation equation](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation) using [ModelingToolkit](https://mtk.sciml.ai/stable/)/[Catalyst](https://catalyst.sciml.ai/dev/) framework and it's comparison with analytical solution obtained by [Method of scotts](https://journals.ametsoc.org/view/journals/atsc/25/1/1520-0469_1968_025_0054_asocdc_2_0_co_2.xml) that is also mentioned in reference [3](https://doi.org/10.1006/jcph.2002.7017)
 
   - **1.)**  Importing some important packages.
 ```julia
@@ -73,7 +73,7 @@ end
 u₀ = zeros(Int64, N);   u₀[1] = uₒ;   # initial condition of monomers
 u₀map = Pair.(X, u₀); # population of other polymers in zeros
 ```
-  - **6.)**  Push the Reactions(into empty reaction_network) as shown in figure at [here](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation). When `vᵢ[n] == vⱼ[n]` ,we use rate as `2*k[n]` ,as coagulation kernel is related to deterministic rate-law in form, (to followed from a paper by [Laurenzi et.al](https://www.sciencedirect.com/science/article/pii/S0021999102970178))
+  - **6.)** Here we generate the reactions programmatically. Push the Reactions(into empty reaction_network) as shown in figure at [here](https://en.wikipedia.org/wiki/Smoluchowski_coagulation_equation). When `vᵢ[n] == vⱼ[n]` ,we use rate as `2*k[n]` ,as coagulation kernel is related to deterministic rate-law in form, (to followed from a paper by [Laurenzi et.al](https://www.sciencedirect.com/science/article/pii/S0021999102970178))
           coagulation kernel = (1 + δᵢⱼ)*deterministic rate
                 
 ```julia
