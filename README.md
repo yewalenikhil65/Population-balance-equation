@@ -145,8 +145,10 @@ plot!(ϕ, jsol[3,:]/uₒ, lw = 2, xlabel = "Time (sec)",label = string("X",3))
 plot!(ϕ, sol[3,:]/Nₒ, lw = 2, line = (:dot, 4) ,ylabel = "N(i,t)/N(1,0)"
         ,label = string("Analytical sol", "--X",3))
 
-
 ```
+ - **9.)** Example plot for **additive kernel** 
+               ![](https://github.com/yewalenikhil65/Population-balance-equation/blob/main/Figs/additive_kernel.png)
+ 
 **Benchmarking PBE** - Credits to [SciMLBenchmarks](https://benchmarks.sciml.ai/) for the elegant codes for the purpose of benchmarking
 click [here](https://github.com/yewalenikhil65/Population-balance-equation/blob/main/Figs/benchmarking_PBE.png) to see how different Jump algorithms fare for solving PBE stochastically
 
